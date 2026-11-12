@@ -60,11 +60,7 @@ pip install -r requirements.txt
 ```
 
 ### 3. Configure Environment Variables
-Copy `.env.example` to `.env`:
-```bash
-cp .env.example .env
-```
-Edit `.env` with your credentials:
+Create a `.env` file in the project root:
 ```env
 mongo_uri=your_mongodb_atlas_connection_string
 secret_key=your_secret_jwt_key

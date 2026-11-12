@@ -1,7 +1,6 @@
 # Environment secrets - DO NOT COMMIT TO GITHUB
-.env
-.env.local
-.env.*.local
+.env*
+*.env
 
 # Python cache
 __pycache__/
