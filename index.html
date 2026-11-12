@@ -1,0 +1,2186 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Hostel & PG Management System</title>
+  <style>
+    :root {
+      --primary: #4f46e5;
+      --primary-hover: #4338ca;
+      --primary-light: #eef2ff;
+      --secondary: #059669;
+      --secondary-light: #ecfdf5;
+      --dark: #0f172a;
+      --gray-900: #1e293b;
+      --gray-700: #334155;
+      --gray-500: #64748b;
+      --gray-300: #cbd5e1;
+      --gray-100: #f1f5f9;
+      --gray-50: #f8fafc;
+      --white: #ffffff;
+      --danger: #ef4444;
+      --danger-light: #fef2f2;
+      --warning: #f59e0b;
+      --warning-light: #fffbeb;
+      --border: #e2e8f0;
+      --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+      --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+      --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+      --radius: 12px;
+      --radius-sm: 8px;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, "Fira Sans", "Droid Sans", "Helvetica Neue", sans-serif;
+    }
+
+    body {
+      background: #f1f5f9;
+      color: var(--gray-900);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* Navbar */
+    .navbar {
+      background: var(--white);
+      border-bottom: 1px solid var(--border);
+      position: sticky;
+      top: 0;
+      z-index: 40;
+      box-shadow: var(--shadow-sm);
+    }
+
+    .nav-container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0.85rem 1.5rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1rem;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      text-decoration: none;
+      color: var(--dark);
+    }
+
+    .brand-icon {
+      width: 40px;
+      height: 40px;
+      background: linear-gradient(135deg, var(--primary), #818cf8);
+      color: white;
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.35rem;
+      box-shadow: 0 4px 10px rgba(79, 70, 229, 0.3);
+    }
+
+    .brand-text h1 {
+      font-size: 1.15rem;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+    }
+
+    .brand-text p {
+      font-size: 0.75rem;
+      color: var(--gray-500);
+    }
+
+    .nav-actions {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+
+    .status-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      padding: 0.35rem 0.75rem;
+      border-radius: 9999px;
+      font-size: 0.75rem;
+      font-weight: 600;
+      background: var(--gray-100);
+      color: var(--gray-700);
+      border: 1px solid var(--border);
+      transition: all 0.2s ease;
+    }
+
+    .status-badge.online {
+      background: var(--secondary-light);
+      color: var(--secondary);
+      border-color: #a7f3d0;
+    }
+
+    .status-badge.offline {
+      background: var(--danger-light);
+      color: var(--danger);
+      border-color: #fecaca;
+    }
+
+    .status-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: currentColor;
+    }
+
+    .status-badge.online .status-dot {
+      animation: pulse 2s infinite;
+    }
+
+    @keyframes pulse {
+      0% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.4; transform: scale(1.2); }
+      100% { opacity: 1; transform: scale(1); }
+    }
+
+    /* Main Container */
+    .main-container {
+      max-width: 1200px;
+      margin: 1.5rem auto;
+      padding: 0 1.5rem;
+      width: 100%;
+      flex: 1;
+    }
+
+    /* Stats Banner */
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 1rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .stat-card {
+      background: var(--white);
+      padding: 1.25rem;
+      border-radius: var(--radius);
+      border: 1px solid var(--border);
+      box-shadow: var(--shadow-sm);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      transition: transform 0.15s ease, box-shadow 0.15s ease;
+    }
+
+    .stat-card:hover {
+      transform: translateY(-2px);
+      box-shadow: var(--shadow-md);
+    }
+
+    .stat-label {
+      font-size: 0.85rem;
+      color: var(--gray-500);
+      margin-bottom: 0.25rem;
+      font-weight: 500;
+    }
+
+    .stat-value {
+      font-size: 1.75rem;
+      font-weight: 700;
+      color: var(--dark);
+    }
+
+    .stat-icon {
+      width: 48px;
+      height: 48px;
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.5rem;
+    }
+
+    .stat-icon.blue { background: #eff6ff; color: #2563eb; }
+    .stat-icon.green { background: #f0fdf4; color: #16a34a; }
+    .stat-icon.purple { background: #faf5ff; color: #9333ea; }
+
+    /* Nav Tabs */
+    .tabs-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-bottom: 1px solid var(--border);
+      margin-bottom: 1.5rem;
+      gap: 1rem;
+      flex-wrap: wrap;
+    }
+
+    .nav-tabs {
+      display: flex;
+      gap: 0.5rem;
+    }
+
+    .tab-btn {
+      padding: 0.75rem 1.25rem;
+      background: transparent;
+      border: none;
+      border-bottom: 2px solid transparent;
+      font-size: 0.95rem;
+      font-weight: 600;
+      color: var(--gray-500);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      transition: all 0.2s ease;
+    }
+
+    .tab-btn:hover {
+      color: var(--dark);
+    }
+
+    .tab-btn.active {
+      color: var(--primary);
+      border-bottom-color: var(--primary);
+    }
+
+    .action-btns {
+      display: flex;
+      gap: 0.5rem;
+    }
+
+    /* Buttons */
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+      padding: 0.6rem 1.1rem;
+      font-size: 0.875rem;
+      font-weight: 600;
+      border-radius: var(--radius-sm);
+      border: 1px solid transparent;
+      cursor: pointer;
+      transition: all 0.15s ease;
+      white-space: nowrap;
+    }
+
+    .btn:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+    }
+
+    .btn-primary {
+      background: var(--primary);
+      color: var(--white);
+    }
+
+    .btn-primary:hover:not(:disabled) {
+      background: var(--primary-hover);
+    }
+
+    .btn-secondary {
+      background: var(--secondary);
+      color: var(--white);
+    }
+
+    .btn-secondary:hover:not(:disabled) {
+      background: #047857;
+    }
+
+    .btn-outline {
+      background: var(--white);
+      color: var(--gray-700);
+      border-color: var(--border);
+    }
+
+    .btn-outline:hover:not(:disabled) {
+      background: var(--gray-50);
+      border-color: var(--gray-300);
+      color: var(--dark);
+    }
+
+    .btn-danger-light {
+      background: var(--danger-light);
+      color: var(--danger);
+      border-color: #fecaca;
+    }
+
+    .btn-danger-light:hover:not(:disabled) {
+      background: #fee2e2;
+    }
+
+    /* Tab Content Panes */
+    .tab-pane {
+      display: none;
+    }
+
+    .tab-pane.active {
+      display: block;
+      animation: fadeIn 0.2s ease;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(4px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* Search & Filter Bar */
+    .search-filter-bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1rem;
+      margin-bottom: 1.5rem;
+      flex-wrap: wrap;
+    }
+
+    .search-box {
+      flex: 1;
+      min-width: 260px;
+      position: relative;
+    }
+
+    .search-box input {
+      width: 100%;
+      padding: 0.65rem 1rem 0.65rem 2.4rem;
+      border-radius: var(--radius-sm);
+      border: 1px solid var(--border);
+      background: var(--white);
+      font-size: 0.9rem;
+      outline: none;
+      transition: border-color 0.2s ease;
+    }
+
+    .search-box input:focus {
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1);
+    }
+
+    .search-box .search-icon {
+      position: absolute;
+      left: 0.8rem;
+      top: 50%;
+      transform: translateY(-50%);
+      color: var(--gray-500);
+      font-size: 1rem;
+    }
+
+    .filter-chips {
+      display: flex;
+      gap: 0.5rem;
+    }
+
+    .filter-chip {
+      padding: 0.45rem 0.85rem;
+      font-size: 0.8rem;
+      font-weight: 600;
+      border-radius: 9999px;
+      border: 1px solid var(--border);
+      background: var(--white);
+      color: var(--gray-700);
+      cursor: pointer;
+      transition: all 0.15s ease;
+    }
+
+    .filter-chip.active {
+      background: var(--primary);
+      color: var(--white);
+      border-color: var(--primary);
+    }
+
+    /* Grid of Cards */
+    .cards-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+      gap: 1.25rem;
+    }
+
+    .card {
+      background: var(--white);
+      border-radius: var(--radius);
+      border: 1px solid var(--border);
+      box-shadow: var(--shadow-sm);
+      padding: 1.25rem;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      gap: 1rem;
+      transition: transform 0.15s ease, box-shadow 0.15s ease;
+    }
+
+    .card:hover {
+      transform: translateY(-2px);
+      box-shadow: var(--shadow-md);
+    }
+
+    .card-header {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 0.75rem;
+    }
+
+    .card-title-group {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+
+    .card-avatar {
+      width: 44px;
+      height: 44px;
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.35rem;
+      flex-shrink: 0;
+    }
+
+    .card-avatar.student {
+      background: var(--primary-light);
+      color: var(--primary);
+    }
+
+    .card-avatar.hostel {
+      background: var(--secondary-light);
+      color: var(--secondary);
+    }
+
+    .card-name {
+      font-size: 1.05rem;
+      font-weight: 700;
+      color: var(--dark);
+    }
+
+    .card-username {
+      font-size: 0.8rem;
+      color: var(--gray-500);
+      font-family: monospace;
+    }
+
+    .role-badge {
+      display: inline-block;
+      padding: 0.25rem 0.6rem;
+      border-radius: 6px;
+      font-size: 0.7rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    .role-badge.student {
+      background: var(--primary-light);
+      color: var(--primary);
+    }
+
+    .role-badge.hostel {
+      background: var(--secondary-light);
+      color: var(--secondary);
+    }
+
+    .card-body {
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+      font-size: 0.875rem;
+      color: var(--gray-700);
+    }
+
+    .card-detail-item {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .card-detail-icon {
+      color: var(--gray-500);
+      width: 18px;
+      text-align: center;
+    }
+
+    .card-pills {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.35rem;
+      margin-top: 0.25rem;
+    }
+
+    .pill {
+      font-size: 0.75rem;
+      padding: 0.2rem 0.5rem;
+      border-radius: 4px;
+      background: var(--gray-100);
+      color: var(--gray-700);
+      border: 1px solid var(--border);
+    }
+
+    .card-footer {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-top: 1px solid var(--border);
+      padding-top: 0.75rem;
+      margin-top: 0.25rem;
+    }
+
+    .card-price {
+      font-weight: 700;
+      color: var(--dark);
+      font-size: 0.95rem;
+    }
+
+    .card-price span {
+      font-size: 0.75rem;
+      font-weight: 400;
+      color: var(--gray-500);
+    }
+
+    /* Form Card */
+    .form-card {
+      background: var(--white);
+      border-radius: var(--radius);
+      border: 1px solid var(--border);
+      box-shadow: var(--shadow-sm);
+      padding: 2rem;
+      max-width: 760px;
+      margin: 0 auto;
+    }
+
+    .form-header {
+      margin-bottom: 1.5rem;
+      border-bottom: 1px solid var(--border);
+      padding-bottom: 1rem;
+    }
+
+    .form-header h2 {
+      font-size: 1.35rem;
+      font-weight: 700;
+      color: var(--dark);
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .form-header p {
+      font-size: 0.85rem;
+      color: var(--gray-500);
+      margin-top: 0.25rem;
+    }
+
+    .form-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 1.25rem;
+    }
+
+    @media (max-width: 640px) {
+      .form-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .form-group {
+      display: flex;
+      flex-direction: column;
+      gap: 0.4rem;
+    }
+
+    .form-group.full {
+      grid-column: 1 / -1;
+    }
+
+    .form-label {
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: var(--gray-700);
+    }
+
+    .form-label span.req {
+      color: var(--danger);
+    }
+
+    .form-input, .form-select, .form-textarea {
+      width: 100%;
+      padding: 0.65rem 0.85rem;
+      border-radius: var(--radius-sm);
+      border: 1px solid var(--border);
+      font-size: 0.9rem;
+      background: var(--white);
+      color: var(--dark);
+      outline: none;
+      transition: border-color 0.15s ease;
+    }
+
+    .form-input:focus, .form-select:focus, .form-textarea:focus {
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1);
+    }
+
+    .checkbox-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+      gap: 0.6rem;
+      margin-top: 0.35rem;
+    }
+
+    .checkbox-label {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-size: 0.85rem;
+      color: var(--gray-700);
+      cursor: pointer;
+      user-select: none;
+    }
+
+    .checkbox-label input[type="checkbox"] {
+      width: 16px;
+      height: 16px;
+      accent-color: var(--primary);
+    }
+
+    .form-actions {
+      display: flex;
+      justify-content: flex-end;
+      gap: 0.75rem;
+      margin-top: 2rem;
+      border-top: 1px solid var(--border);
+      padding-top: 1.25rem;
+    }
+
+    /* Empty state */
+    .empty-state {
+      text-align: center;
+      padding: 3.5rem 1.5rem;
+      background: var(--white);
+      border-radius: var(--radius);
+      border: 1px dashed var(--gray-300);
+      grid-column: 1 / -1;
+    }
+
+    .empty-icon {
+      font-size: 3rem;
+      margin-bottom: 1rem;
+      opacity: 0.8;
+    }
+
+    .empty-state h3 {
+      font-size: 1.15rem;
+      font-weight: 700;
+      color: var(--dark);
+      margin-bottom: 0.5rem;
+    }
+
+    .empty-state p {
+      font-size: 0.9rem;
+      color: var(--gray-500);
+      max-width: 400px;
+      margin: 0 auto 1.5rem;
+    }
+
+    /* Toast Notification */
+    .toast-container {
+      position: fixed;
+      bottom: 1.5rem;
+      right: 1.5rem;
+      z-index: 100;
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+    }
+
+    .toast {
+      background: var(--dark);
+      color: var(--white);
+      padding: 0.85rem 1.25rem;
+      border-radius: var(--radius-sm);
+      box-shadow: var(--shadow-lg);
+      font-size: 0.875rem;
+      display: flex;
+      align-items: center;
+      gap: 0.65rem;
+      animation: slideIn 0.25s ease;
+      min-width: 280px;
+    }
+
+    .toast.success { background: #065f46; border-left: 4px solid #34d399; }
+    .toast.error { background: #991b1b; border-left: 4px solid #f87171; }
+    .toast.info { background: #1e293b; border-left: 4px solid #818cf8; }
+
+    @keyframes slideIn {
+      from { transform: translateX(100%); opacity: 0; }
+      to { transform: translateX(0); opacity: 1; }
+    }
+
+    /* Auth & Modals */
+    .auth-section {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .auth-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      padding: 0.35rem 0.75rem;
+      border-radius: 9999px;
+      font-size: 0.8rem;
+      font-weight: 600;
+      background: var(--primary-light);
+      color: var(--primary);
+      border: 1px solid rgba(79, 70, 229, 0.2);
+      cursor: pointer;
+      transition: all 0.15s ease;
+    }
+
+    .auth-pill:hover {
+      background: #e0e7ff;
+      transform: translateY(-1px);
+    }
+
+    .modal-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(15, 23, 42, 0.65);
+      backdrop-filter: blur(4px);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 1000;
+      opacity: 0;
+      visibility: hidden;
+      transition: opacity 0.2s ease, visibility 0.2s ease;
+    }
+
+    .modal-overlay.active {
+      opacity: 1;
+      visibility: visible;
+    }
+
+    .modal-card {
+      background: var(--white);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow-lg);
+      width: 100%;
+      max-width: 440px;
+      margin: 1rem;
+      overflow: hidden;
+      transform: translateY(12px) scale(0.98);
+      transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+      border: 1px solid var(--border);
+    }
+
+    .modal-overlay.active .modal-card {
+      transform: translateY(0) scale(1);
+    }
+
+    .modal-header {
+      padding: 1.1rem 1.4rem;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background: var(--gray-50);
+    }
+
+    .modal-header h3 {
+      font-size: 1.05rem;
+      font-weight: 700;
+      color: var(--dark);
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .modal-close {
+      background: transparent;
+      border: none;
+      font-size: 1.4rem;
+      color: var(--gray-500);
+      cursor: pointer;
+      padding: 0.2rem 0.5rem;
+      border-radius: 6px;
+      line-height: 1;
+    }
+
+    .modal-close:hover {
+      color: var(--dark);
+      background: var(--gray-200);
+    }
+
+    .modal-body {
+      padding: 1.4rem;
+    }
+
+    .profile-info-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 0.75rem;
+    }
+
+    .profile-info-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 0.5rem 0.75rem;
+      background: var(--gray-50);
+      border-radius: var(--radius-sm);
+      border: 1px solid var(--border);
+      font-size: 0.85rem;
+    }
+
+    .profile-info-key {
+      color: var(--gray-500);
+      font-weight: 500;
+    }
+
+    .profile-info-val {
+      font-weight: 600;
+      color: var(--dark);
+    }
+
+    .tab-btn .badge {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 0.15rem 0.5rem;
+      border-radius: 9999px;
+      font-size: 0.72rem;
+      font-weight: 700;
+      background: var(--gray-100);
+      color: var(--gray-700);
+      margin-left: 0.35rem;
+      transition: all 0.2s ease;
+    }
+
+    .tab-btn.active .badge {
+      background: var(--primary-light);
+      color: var(--primary);
+    }
+
+    /* Register Choice Cards */
+    .register-choice-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1rem;
+      margin-top: 1rem;
+    }
+
+    @media (max-width: 640px) {
+      .register-choice-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .register-choice-card {
+      padding: 1.5rem 1rem;
+      text-align: center;
+      border-radius: var(--radius);
+      border: 2px solid var(--border);
+      background: var(--white);
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .register-choice-card:hover {
+      border-color: var(--primary);
+      transform: translateY(-2px);
+      box-shadow: var(--shadow-md);
+    }
+
+    .choice-icon {
+      font-size: 2.5rem;
+      margin-bottom: 0.75rem;
+    }
+
+    .choice-title {
+      font-weight: 700;
+      font-size: 1.05rem;
+      color: var(--dark);
+      margin-bottom: 0.35rem;
+    }
+
+    .choice-desc {
+      font-size: 0.8rem;
+      color: var(--gray-500);
+      line-height: 1.4;
+    }
+
+    /* Admin Banner */
+    .admin-banner {
+      background: #fef3c7;
+      border: 1px solid #fde68a;
+      color: #92400e;
+      padding: 0.65rem 1rem;
+      border-radius: var(--radius-sm);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      font-size: 0.85rem;
+      font-weight: 600;
+      margin-bottom: 1.25rem;
+      animation: fadeIn 0.2s ease;
+      flex-wrap: wrap;
+      gap: 0.75rem;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Navbar -->
+  <nav class="navbar">
+    <div class="nav-container">
+      <a href="#" class="brand" onclick="switchTab('directory')">
+        <div class="brand-icon">🏠</div>
+        <div class="brand-text">
+          <h1>Hostel & PG Hub</h1>
+          <p>Student & Accommodation Management</p>
+        </div>
+      </a>
+
+      <div class="nav-actions">
+        <div id="backend-status" class="status-badge">
+          <span class="status-dot"></span>
+          <span id="backend-text">Checking Backend...</span>
+        </div>
+        <button class="btn btn-outline" onclick="loadUsers()" title="Refresh database entries">
+          🔄 Refresh
+        </button>
+        <div id="auth-section" class="auth-section"></div>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Main Content -->
+  <main class="main-container">
+
+    <!-- Stats Banner (Accommodations) -->
+    <div class="stats-grid">
+      <div class="stat-card">
+        <div>
+          <div class="stat-label">Available Hostels & PGs</div>
+          <div class="stat-value" id="stat-hostels">0</div>
+        </div>
+        <div class="stat-icon green">🏢</div>
+      </div>
+      <div class="stat-card">
+        <div>
+          <div class="stat-label">Boys Hostels & PGs</div>
+          <div class="stat-value" id="stat-boys">0</div>
+        </div>
+        <div class="stat-icon blue">🚹</div>
+      </div>
+      <div class="stat-card">
+        <div>
+          <div class="stat-label">Girls & Co-ed PGs</div>
+          <div class="stat-value" id="stat-girls">0</div>
+        </div>
+        <div class="stat-icon purple">🚺</div>
+      </div>
+    </div>
+
+    <!-- Admin Controls Banner (active only when admin mode is toggled) -->
+    <div id="admin-banner" class="admin-banner" style="display: none;">
+      <div>🛠️ <strong>Admin Controls Active</strong>: Superuser permissions enabled (<span id="admin-db-stats">Direct MongoDB access</span>).</div>
+      <div style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
+        <button class="btn btn-primary" style="padding: 0.35rem 0.75rem; font-size: 0.75rem;" onclick="switchTab('add-student')">+ Add Student Record</button>
+        <button class="btn btn-secondary" style="padding: 0.35rem 0.75rem; font-size: 0.75rem;" onclick="switchTab('add-hostel')">+ Add Hostel Record</button>
+        <button class="btn btn-outline" style="padding: 0.35rem 0.75rem; font-size: 0.75rem;" onclick="toggleAdminMode(false)">Exit Admin</button>
+      </div>
+    </div>
+
+    <!-- Directory Header & Action Controls -->
+    <div class="tabs-header">
+      <div class="section-title-group">
+        <h2 style="font-size: 1.25rem; font-weight: 700; color: var(--dark); display: flex; align-items: center; gap: 0.6rem; margin: 0 0 0.2rem 0;">
+          🏢 Explore Hostels & PGs <span class="badge" id="badge-hostels">0</span>
+        </h2>
+        <p style="font-size: 0.85rem; color: var(--gray-500); margin: 0;">Verified accommodations available for students and professionals</p>
+      </div>
+
+      <div class="action-btns" id="homepage-actions">
+        <button class="btn btn-primary" onclick="openRegisterModal()" title="Register as student or list accommodation">
+          📝 Register / List Your PG
+        </button>
+        <button class="btn btn-outline" id="btn-admin-toggle" onclick="toggleAdminMode()" title="Toggle admin tools for database editing">
+          🛠️ Admin Controls
+        </button>
+      </div>
+    </div>
+
+    <!-- PANE 1: Directory View -->
+    <section class="tab-pane active" id="pane-directory">
+      <div class="search-filter-bar">
+        <div class="search-box">
+          <span class="search-icon">🔍</span>
+          <input type="text" id="search-input" placeholder="Search by hostel name, location, owner, or amenities..." oninput="filterCards()">
+        </div>
+        <div class="filter-chips">
+          <button class="filter-chip active" id="filter-all-hostels" onclick="setHostelTypeFilter('all')">All Accommodations</button>
+          <button class="filter-chip" id="filter-boys" onclick="setHostelTypeFilter('boys')">🚹 Boys Hostels</button>
+          <button class="filter-chip" id="filter-girls" onclick="setHostelTypeFilter('girls')">🚺 Girls Hostels</button>
+          <button class="filter-chip" id="filter-coed" onclick="setHostelTypeFilter('coed')">🚻 Co-ed / Mixed</button>
+        </div>
+      </div>
+
+      <div class="cards-grid" id="cards-container">
+        <!-- Rendered dynamically -->
+      </div>
+    </section>
+
+    <!-- PANE 2: Add Student Form -->
+    <section class="tab-pane" id="pane-add-student">
+      <div class="form-card">
+        <div class="form-header" style="display: flex; justify-content: space-between; align-items: flex-start; gap: 1rem;">
+          <div>
+            <h2>🎓 Register New Student</h2>
+            <p>Creates student login credentials and profile in MongoDB</p>
+          </div>
+          <button type="button" class="btn btn-outline" style="padding: 0.35rem 0.75rem; font-size: 0.8rem;" onclick="switchTab('directory')">
+            ← Back to Listings
+          </button>
+        </div>
+
+        <form id="student-form" onsubmit="handleStudentSubmit(event)">
+          <div class="form-grid">
+            <div class="form-group">
+              <label class="form-label">Username <span class="req">*</span></label>
+              <input type="text" class="form-input" id="st-username" required placeholder="e.g. rahul_sharma">
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">Password <span class="req">*</span></label>
+              <input type="password" class="form-input" id="st-password" required placeholder="Create secure password">
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">Full Name</label>
+              <input type="text" class="form-input" id="st-name" placeholder="e.g. Rahul Sharma">
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">Gender</label>
+              <select class="form-select" id="st-gender">
+                <option value="Male">Male</option>
+                <option value="Female">Female</option>
+                <option value="Other">Other</option>
+              </select>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">College / University</label>
+              <input type="text" class="form-input" id="st-college" placeholder="e.g. Delhi University / IIT">
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">Monthly Budget (₹)</label>
+              <input type="number" class="form-input" id="st-budget" placeholder="e.g. 8500">
+            </div>
+
+            <div class="form-group full">
+              <label class="form-label">Preferred Room Sharing</label>
+              <select class="form-select" id="st-sharing">
+                <option value="Single Room">Single Room</option>
+                <option value="Double Sharing" selected>Double Sharing</option>
+                <option value="Triple Sharing">Triple Sharing</option>
+                <option value="Any">Any Sharing</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="form-actions">
+            <button type="button" class="btn btn-outline" onclick="switchTab('directory')">Cancel</button>
+            <button type="submit" class="btn btn-primary" id="btn-save-student">
+              💾 Save Student Profile
+            </button>
+          </div>
+        </form>
+      </div>
+    </section>
+
+    <!-- PANE 3: Add Hostel Form -->
+    <section class="tab-pane" id="pane-add-hostel">
+      <div class="form-card">
+        <div class="form-header" style="display: flex; justify-content: space-between; align-items: flex-start; gap: 1rem;">
+          <div>
+            <h2>🏢 Register New Hostel / PG</h2>
+            <p>Creates hostel owner account and accommodation listing in MongoDB</p>
+          </div>
+          <button type="button" class="btn btn-outline" style="padding: 0.35rem 0.75rem; font-size: 0.8rem;" onclick="switchTab('directory')">
+            ← Back to Listings
+          </button>
+        </div>
+
+        <form id="hostel-form" onsubmit="handleHostelSubmit(event)">
+          <div class="form-grid">
+            <div class="form-group">
+              <label class="form-label">Owner Username <span class="req">*</span></label>
+              <input type="text" class="form-input" id="hs-username" required placeholder="e.g. sunrise_hostel">
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">Password <span class="req">*</span></label>
+              <input type="password" class="form-input" id="hs-password" required placeholder="Create secure password">
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">Hostel / PG Name</label>
+              <input type="text" class="form-input" id="hs-name" placeholder="e.g. Sunrise Luxury Boys PG">
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">Owner / Caretaker Name</label>
+              <input type="text" class="form-input" id="hs-owner" placeholder="e.g. Rajesh Kumar">
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">Hostel Type</label>
+              <select class="form-select" id="hs-type">
+                <option value="Boys Hostel">Boys Hostel</option>
+                <option value="Girls Hostel">Girls Hostel</option>
+                <option value="Co-ed / Mixed PG">Co-ed / Mixed PG</option>
+              </select>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">Contact Phone Number</label>
+              <input type="tel" class="form-input" id="hs-contact" placeholder="e.g. +91 9876543210">
+            </div>
+
+            <div class="form-group full">
+              <label class="form-label">Location / Address</label>
+              <input type="text" class="form-input" id="hs-location" placeholder="e.g. North Campus, Near Metro Gate 3">
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">Single Room Rent (₹/month)</label>
+              <input type="number" class="form-input" id="hs-rent-single" placeholder="e.g. 12000">
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">Double Sharing Rent (₹/month)</label>
+              <input type="number" class="form-input" id="hs-rent-double" placeholder="e.g. 7500">
+            </div>
+
+            <div class="form-group full">
+              <label class="form-label">Included Amenities</label>
+              <div class="checkbox-grid">
+                <label class="checkbox-label"><input type="checkbox" value="High-Speed WiFi" class="amenity-cb" checked> WiFi</label>
+                <label class="checkbox-label"><input type="checkbox" value="3 Times Mess / Food" class="amenity-cb" checked> Mess / Food</label>
+                <label class="checkbox-label"><input type="checkbox" value="Air Conditioner (AC)" class="amenity-cb" checked> AC</label>
+                <label class="checkbox-label"><input type="checkbox" value="Laundry / Washing" class="amenity-cb"> Laundry</label>
+                <label class="checkbox-label"><input type="checkbox" value="24x7 Security & CCTV" class="amenity-cb" checked> Security / CCTV</label>
+                <label class="checkbox-label"><input type="checkbox" value="Power Backup" class="amenity-cb"> Power Backup</label>
+                <label class="checkbox-label"><input type="checkbox" value="Geyser / Hot Water" class="amenity-cb" checked> Hot Water</label>
+                <label class="checkbox-label"><input type="checkbox" value="Daily Housekeeping" class="amenity-cb"> Housekeeping</label>
+              </div>
+            </div>
+          </div>
+
+          <div class="form-actions">
+            <button type="button" class="btn btn-outline" onclick="switchTab('directory')">Cancel</button>
+            <button type="submit" class="btn btn-secondary" id="btn-save-hostel">
+              💾 Save Hostel Listing
+            </button>
+          </div>
+        </form>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- Toast Notification Container -->
+  <div class="toast-container" id="toast-container"></div>
+
+  <!-- Register Choice Modal -->
+  <div class="modal-overlay" id="register-modal" onclick="handleModalOverlayClick(event, 'register-modal')">
+    <div class="modal-card" style="max-width: 480px;">
+      <div class="modal-header">
+        <h3>✨ Join Hostel & PG Hub</h3>
+        <button class="modal-close" onclick="closeRegisterModal()">&times;</button>
+      </div>
+      <div class="modal-body">
+        <p style="font-size: 0.88rem; color: var(--gray-500); text-align: center; margin-bottom: 1.25rem;">
+          Choose your account type to get started:
+        </p>
+        <div class="register-choice-grid">
+          <div class="register-choice-card" onclick="openStudentRegistration()">
+            <div class="choice-icon">🎓</div>
+            <div class="choice-title">Student</div>
+            <div class="choice-desc">Find verified hostels, browse room sharing, connect with roommates, and set your college & budget.</div>
+          </div>
+          <div class="register-choice-card" onclick="openHostelRegistration()">
+            <div class="choice-icon">🏢</div>
+            <div class="choice-title">Hostel / PG Owner</div>
+            <div class="choice-desc">List your property, set room rents, highlight amenities (WiFi, Mess, AC), and reach students directly.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Login Modal -->
+  <div class="modal-overlay" id="login-modal" onclick="handleModalOverlayClick(event, 'login-modal')">
+    <div class="modal-card">
+      <div class="modal-header">
+        <h3>🔐 Account Login</h3>
+        <button class="modal-close" onclick="closeLoginModal()">&times;</button>
+      </div>
+      <div class="modal-body">
+        <form id="login-form" onsubmit="handleLoginSubmit(event)">
+          <div class="form-group" style="margin-bottom: 1rem;">
+            <label class="form-label">Username <span class="req">*</span></label>
+            <input type="text" class="form-input" id="login-username" required placeholder="e.g. aarav_mehta or sassy_palak_12" autocomplete="username">
+          </div>
+
+          <div class="form-group" style="margin-bottom: 1.25rem;">
+            <label class="form-label">Password <span class="req">*</span></label>
+            <input type="password" class="form-input" id="login-password" required placeholder="Enter password" autocomplete="current-password">
+          </div>
+
+          <div style="background: var(--gray-50); border: 1px solid var(--border); border-radius: var(--radius-sm); padding: 0.75rem; margin-bottom: 1.25rem; font-size: 0.78rem; color: var(--gray-700);">
+            <div style="font-weight: 600; margin-bottom: 0.25rem; color: var(--dark);">💡 Demo Accounts:</div>
+            <div>• Student: <code>aarav_mehta</code> / <code>aarav123</code></div>
+            <div>• Student: <code>sassy_palak_12</code> / <code>palak123</code></div>
+            <div>• Hostel: <code>sunrise_boys_pg</code> / <code>sunrise123</code></div>
+          </div>
+
+          <div style="display: flex; justify-content: flex-end; gap: 0.6rem;">
+            <button type="button" class="btn btn-outline" onclick="closeLoginModal()">Cancel</button>
+            <button type="submit" class="btn btn-primary" id="btn-login-submit">
+              🔑 Log In
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- Profile Modal -->
+  <div class="modal-overlay" id="profile-modal" onclick="handleModalOverlayClick(event, 'profile-modal')">
+    <div class="modal-card">
+      <div class="modal-header">
+        <h3>👤 Authenticated User Profile</h3>
+        <button class="modal-close" onclick="closeProfileModal()">&times;</button>
+      </div>
+      <div class="modal-body" id="profile-modal-body">
+        <!-- Rendered via /me -->
+      </div>
+      <div style="padding: 0.9rem 1.4rem; background: var(--gray-50); border-top: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center;">
+        <span style="font-size: 0.75rem; color: var(--secondary); font-weight: 600;">✓ Active Bearer JWT</span>
+        <button class="btn btn-danger-light" style="padding: 0.35rem 0.75rem; font-size: 0.8rem;" onclick="logoutUser()">🚪 Log Out</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Admin Authentication Modal -->
+  <div class="modal-overlay" id="admin-login-modal" onclick="handleModalOverlayClick(event, 'admin-login-modal')">
+    <div class="modal-card" style="max-width: 440px;">
+      <div class="modal-header" style="background: #fef3c7; border-bottom-color: #fde68a;">
+        <h3 style="color: #92400e;">🛡️ Administrator Verification</h3>
+        <button class="modal-close" onclick="closeAdminLoginModal()">&times;</button>
+      </div>
+      <div class="modal-body">
+        <p style="font-size: 0.85rem; color: var(--gray-700); margin-bottom: 1.25rem;">
+          Restricted area. Please authenticate with administrator credentials to unlock record management and database deletion controls.
+        </p>
+
+        <form id="admin-login-form" onsubmit="handleAdminLoginSubmit(event)">
+          <div class="form-group" style="margin-bottom: 1rem;">
+            <label class="form-label">Admin Username <span class="req">*</span></label>
+            <input type="text" class="form-input" id="admin-username" required placeholder="admin" autocomplete="username">
+          </div>
+
+          <div class="form-group" style="margin-bottom: 1.25rem;">
+            <label class="form-label">Admin Password <span class="req">*</span></label>
+            <input type="password" class="form-input" id="admin-password" required placeholder="Enter admin password" autocomplete="current-password">
+          </div>
+
+          <div style="background: var(--gray-50); border: 1px solid var(--border); border-radius: var(--radius-sm); padding: 0.75rem; margin-bottom: 1.25rem; font-size: 0.78rem; color: var(--gray-700);">
+            <div style="font-weight: 600; margin-bottom: 0.25rem; color: var(--dark);">🔐 Admin Account:</div>
+            <div>• Username: <code>admin</code></div>
+            <div>• Password: <code>admin123</code></div>
+          </div>
+
+          <div style="display: flex; justify-content: flex-end; gap: 0.6rem;">
+            <button type="button" class="btn btn-outline" onclick="closeAdminLoginModal()">Cancel</button>
+            <button type="submit" class="btn btn-primary" id="btn-admin-submit" style="background: #d97706; border-color: #b45309;">
+              🛡️ Verify & Unlock Admin
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Configuration: Auto-resolve backend API base
+    const API_BASE = (window.location.protocol === 'file:')
+      ? 'http://127.0.0.1:8000'
+      : (window.location.origin.includes('8000') ? window.location.origin : 'http://127.0.0.1:8000');
+
+    let allUsers = [];
+    let currentRoleFilter = 'hostel';
+    let currentTypeFilter = 'all';
+    let adminModeActive = false;
+
+    // Admin Modal & Verification
+    function openAdminLoginModal() {
+      const modal = document.getElementById('admin-login-modal');
+      if (modal) {
+        modal.classList.add('active');
+        setTimeout(() => {
+          const input = document.getElementById('admin-username');
+          if (input) {
+            input.value = 'admin';
+            const pwInput = document.getElementById('admin-password');
+            if (pwInput) pwInput.focus();
+          }
+        }, 100);
+      }
+    }
+
+    function closeAdminLoginModal() {
+      const modal = document.getElementById('admin-login-modal');
+      if (modal) modal.classList.remove('active');
+      const form = document.getElementById('admin-login-form');
+      if (form) form.reset();
+    }
+
+    async function handleAdminLoginSubmit(e) {
+      e.preventDefault();
+      const btn = document.getElementById('btn-admin-submit');
+      const originalText = btn.innerHTML;
+      btn.disabled = true;
+      btn.textContent = 'Verifying Admin...';
+
+      const username = document.getElementById('admin-username').value.trim();
+      const password = document.getElementById('admin-password').value;
+
+      try {
+        const res = await fetch(`${API_BASE}/login`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ username, password })
+        });
+
+        const data = await res.json().catch(() => ({}));
+        if (!res.ok) {
+          throw new Error(data.detail || `Authentication failed (${res.status})`);
+        }
+
+        if ((data.role || '').toLowerCase() !== 'admin') {
+          throw new Error('Access Denied: This user account does not possess administrator rights.');
+        }
+
+        const token = data.access_token;
+        const adminUser = {
+          username: data.username || username,
+          role: 'admin',
+          name: 'System Administrator'
+        };
+
+        setAuth(token, adminUser);
+        closeAdminLoginModal();
+        toggleAdminMode(true);
+        showToast('🛡️ Admin verified! Management & deletion tools unlocked.', 'success');
+      } catch (err) {
+        showToast(err.message, 'error');
+      } finally {
+        btn.disabled = false;
+        btn.innerHTML = originalText;
+      }
+    }
+
+    // Toggle Admin Mode
+    function toggleAdminMode(forcedState) {
+      const user = getAuthUser();
+      const isAdmin = user && (user.role || '').toLowerCase() === 'admin';
+
+      if (forcedState === true || (forcedState === undefined && !adminModeActive)) {
+        if (!isAdmin) {
+          openAdminLoginModal();
+          return;
+        }
+        adminModeActive = true;
+      } else {
+        adminModeActive = false;
+      }
+
+      const banner = document.getElementById('admin-banner');
+      if (banner) banner.style.display = adminModeActive ? 'flex' : 'none';
+
+      const toggleBtn = document.getElementById('btn-admin-toggle');
+      if (toggleBtn) {
+        toggleBtn.className = adminModeActive ? 'btn btn-primary' : 'btn btn-outline';
+        toggleBtn.innerHTML = adminModeActive ? '✓ Admin Controls Active' : '🛠️ Admin Controls';
+      }
+
+      showToast(adminModeActive ? 'Admin Mode Active: Superuser controls enabled' : 'Admin Controls Locked', 'info');
+      filterCards();
+    }
+
+    // Registration Modal Handlers
+    function openRegisterModal() {
+      const modal = document.getElementById('register-modal');
+      if (modal) modal.classList.add('active');
+    }
+
+    function closeRegisterModal() {
+      const modal = document.getElementById('register-modal');
+      if (modal) modal.classList.remove('active');
+    }
+
+    function openStudentRegistration() {
+      closeRegisterModal();
+      switchTab('add-student');
+    }
+
+    function openHostelRegistration() {
+      closeRegisterModal();
+      switchTab('add-hostel');
+    }
+
+    // --- Authentication State & Helpers ---
+    function getAuthToken() {
+      return localStorage.getItem('access_token') || null;
+    }
+
+    function getAuthUser() {
+      try {
+        return JSON.parse(localStorage.getItem('auth_user') || 'null');
+      } catch (e) {
+        return null;
+      }
+    }
+
+    function getAuthUsername() {
+      const user = getAuthUser();
+      return user ? user.username : null;
+    }
+
+    function setAuth(token, user) {
+      if (token) localStorage.setItem('access_token', token);
+      if (user) localStorage.setItem('auth_user', JSON.stringify(user));
+      updateAuthUI();
+      filterCards();
+    }
+
+    function clearAuth() {
+      localStorage.removeItem('access_token');
+      localStorage.removeItem('auth_user');
+      updateAuthUI();
+      filterCards();
+    }
+
+    function updateAuthUI() {
+      const authSection = document.getElementById('auth-section');
+      if (!authSection) return;
+
+      const user = getAuthUser();
+      const token = getAuthToken();
+
+      if (token && user) {
+        const isAdmin = (user.role || '').toLowerCase() === 'admin';
+        const badgeStyle = isAdmin 
+          ? 'background: #fef3c7; color: #92400e; border: 1px solid #fde68a;'
+          : '';
+        const badgeIcon = isAdmin ? '🛡️' : '👤';
+
+        authSection.innerHTML = `
+          <div class="auth-pill" style="${badgeStyle}" onclick="openProfileModal()" title="Click to view authenticated profile">
+            <span>${badgeIcon}</span>
+            <span>@${escapeHtml(user.username)}</span>
+            <span style="font-size: 0.72rem; opacity: 0.85; text-transform: capitalize;">(${escapeHtml(user.role || 'user')})</span>
+          </div>
+          <button class="btn btn-outline" style="padding: 0.35rem 0.75rem; font-size: 0.8rem;" onclick="logoutUser()" title="Log out of session">
+            🚪 Logout
+          </button>
+        `;
+      } else {
+        authSection.innerHTML = `
+          <button class="btn btn-outline" style="padding: 0.45rem 0.85rem; font-size: 0.85rem;" onclick="openRegisterModal()" title="Register as student or list hostel">
+            📝 Register
+          </button>
+          <button class="btn btn-primary" style="padding: 0.45rem 0.85rem; font-size: 0.85rem;" onclick="openLoginModal()" title="Login with username and password">
+            🔑 Login
+          </button>
+        `;
+      }
+    }
+
+    function openLoginModal() {
+      const modal = document.getElementById('login-modal');
+      if (modal) {
+        modal.classList.add('active');
+        setTimeout(() => {
+          const input = document.getElementById('login-username');
+          if (input) input.focus();
+        }, 100);
+      }
+    }
+
+    function closeLoginModal() {
+      const modal = document.getElementById('login-modal');
+      if (modal) modal.classList.remove('active');
+      const form = document.getElementById('login-form');
+      if (form) form.reset();
+    }
+
+    function handleModalOverlayClick(e, modalId) {
+      if (e.target === document.getElementById(modalId)) {
+        if (modalId === 'login-modal') closeLoginModal();
+        if (modalId === 'profile-modal') closeProfileModal();
+        if (modalId === 'register-modal') closeRegisterModal();
+        if (modalId === 'admin-login-modal') closeAdminLoginModal();
+      }
+    }
+
+    async function handleLoginSubmit(e) {
+      e.preventDefault();
+      const btn = document.getElementById('btn-login-submit');
+      const originalText = btn.innerHTML;
+      btn.disabled = true;
+      btn.textContent = 'Verifying...';
+
+      const username = document.getElementById('login-username').value.trim();
+      const password = document.getElementById('login-password').value;
+
+      try {
+        const res = await fetch(`${API_BASE}/login`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ username, password })
+        });
+
+        const data = await res.json().catch(() => ({}));
+        if (!res.ok) {
+          throw new Error(data.detail || `Login failed (${res.status})`);
+        }
+
+        const token = data.access_token;
+        const initialUser = {
+          username: data.username || username,
+          role: data.role || 'student'
+        };
+
+        // Fetch full profile via authenticated /me
+        try {
+          const meRes = await fetch(`${API_BASE}/me`, {
+            headers: { 'Authorization': `Bearer ${token}` }
+          });
+          if (meRes.ok) {
+            const meData = await meRes.json();
+            if (meData.user) {
+              Object.assign(initialUser, meData.user);
+            }
+          }
+        } catch (meErr) {
+          // Soft fail for /me, token is still valid
+        }
+
+        setAuth(token, initialUser);
+        closeLoginModal();
+        showToast(`Welcome back, @${initialUser.username}! 🎉`, 'success');
+      } catch (err) {
+        showToast(err.message, 'error');
+      } finally {
+        btn.disabled = false;
+        btn.innerHTML = originalText;
+      }
+    }
+
+    async function openProfileModal() {
+      const modal = document.getElementById('profile-modal');
+      const body = document.getElementById('profile-modal-body');
+      const token = getAuthToken();
+
+      if (!token) {
+        openLoginModal();
+        return;
+      }
+
+      body.innerHTML = `<div style="text-align: center; padding: 1.5rem; color: var(--gray-500);">Loading authenticated details from <code>GET /me</code>...</div>`;
+      modal.classList.add('active');
+
+      try {
+        const res = await fetch(`${API_BASE}/me`, {
+          headers: { 'Authorization': `Bearer ${token}` }
+        });
+
+        if (!res.ok) {
+          if (res.status === 401) {
+            clearAuth();
+            closeProfileModal();
+            showToast('Session expired. Please log in again.', 'info');
+            openLoginModal();
+            return;
+          }
+          throw new Error(`Failed to load profile (${res.status})`);
+        }
+
+        const data = await res.json();
+        const u = data.user || getAuthUser() || {};
+
+        let extraRows = '';
+        if ((u.role || '').toLowerCase() === 'student') {
+          if (u.name) extraRows += `<div class="profile-info-row"><span class="profile-info-key">Full Name</span><span class="profile-info-val">${escapeHtml(u.name)}</span></div>`;
+          if (u.college) extraRows += `<div class="profile-info-row"><span class="profile-info-key">College</span><span class="profile-info-val">${escapeHtml(u.college)}</span></div>`;
+          if (u.gender) extraRows += `<div class="profile-info-row"><span class="profile-info-key">Gender</span><span class="profile-info-val">${escapeHtml(u.gender)}</span></div>`;
+          if (u.budget) extraRows += `<div class="profile-info-row"><span class="profile-info-key">Monthly Budget</span><span class="profile-info-val">₹${Number(u.budget).toLocaleString()}</span></div>`;
+          if (u.preferredSharing) extraRows += `<div class="profile-info-row"><span class="profile-info-key">Sharing Preference</span><span class="profile-info-val">${escapeHtml(u.preferredSharing)}</span></div>`;
+        } else {
+          if (u.name) extraRows += `<div class="profile-info-row"><span class="profile-info-key">Hostel / PG Name</span><span class="profile-info-val">${escapeHtml(u.name)}</span></div>`;
+          if (u.ownerName) extraRows += `<div class="profile-info-row"><span class="profile-info-key">Owner Name</span><span class="profile-info-val">${escapeHtml(u.ownerName)}</span></div>`;
+          if (u.type) extraRows += `<div class="profile-info-row"><span class="profile-info-key">Type</span><span class="profile-info-val">${escapeHtml(u.type)}</span></div>`;
+          if (u.location) extraRows += `<div class="profile-info-row"><span class="profile-info-key">Location</span><span class="profile-info-val">${escapeHtml(u.location)}</span></div>`;
+          if (u.contactNumber) extraRows += `<div class="profile-info-row"><span class="profile-info-key">Contact</span><span class="profile-info-val">${escapeHtml(u.contactNumber)}</span></div>`;
+        }
+
+        body.innerHTML = `
+          <div style="display: flex; align-items: center; gap: 0.85rem; margin-bottom: 1.25rem;">
+            <div style="width: 52px; height: 52px; border-radius: 50%; background: var(--primary-light); color: var(--primary); display: flex; align-items: center; justify-content: center; font-size: 1.6rem;">
+              ${(u.role || '').toLowerCase() === 'student' ? '🎓' : '🏢'}
+            </div>
+            <div>
+              <div style="font-size: 1.15rem; font-weight: 700; color: var(--dark);">${escapeHtml(u.name || u.username)}</div>
+              <div style="font-size: 0.85rem; color: var(--gray-500);">@${escapeHtml(u.username)}</div>
+            </div>
+            <span class="role-badge ${(u.role || '').toLowerCase() === 'student' ? 'student' : 'hostel'}" style="margin-left: auto;">
+              ${escapeHtml(u.role || 'user')}
+            </span>
+          </div>
+
+          <div class="profile-info-grid">
+            <div class="profile-info-row">
+              <span class="profile-info-key">Username</span>
+              <span class="profile-info-val">@${escapeHtml(u.username)}</span>
+            </div>
+            <div class="profile-info-row">
+              <span class="profile-info-key">Account Role</span>
+              <span class="profile-info-val" style="text-transform: capitalize;">${escapeHtml(u.role || 'student')}</span>
+            </div>
+            ${extraRows}
+          </div>
+        `;
+      } catch (err) {
+        body.innerHTML = `<div style="color: var(--danger); text-align: center; padding: 1rem;">${escapeHtml(err.message)}</div>`;
+      }
+    }
+
+    function closeProfileModal() {
+      const modal = document.getElementById('profile-modal');
+      if (modal) modal.classList.remove('active');
+    }
+
+    function logoutUser() {
+      const u = getAuthUser();
+      const uname = u ? `@${u.username}` : '';
+      clearAuth();
+      closeProfileModal();
+      if (adminModeActive) toggleAdminMode(false);
+      showToast(`Logged out ${uname}. See you soon!`, 'info');
+    }
+
+    async function checkCurrentSession() {
+      const token = getAuthToken();
+      if (!token) {
+        updateAuthUI();
+        return;
+      }
+      try {
+        const res = await fetch(`${API_BASE}/me`, {
+          headers: { 'Authorization': `Bearer ${token}` }
+        });
+        if (res.ok) {
+          const data = await res.json();
+          if (data.user) {
+            setAuth(token, data.user);
+            if ((data.user.role || '').toLowerCase() === 'admin') {
+              adminModeActive = true;
+              const banner = document.getElementById('admin-banner');
+              if (banner) banner.style.display = 'flex';
+              const toggleBtn = document.getElementById('btn-admin-toggle');
+              if (toggleBtn) {
+                toggleBtn.className = 'btn btn-primary';
+                toggleBtn.innerHTML = '✓ Admin Controls Active';
+              }
+            }
+          }
+        } else if (res.status === 401) {
+          clearAuth();
+          if (adminModeActive) toggleAdminMode(false);
+        }
+      } catch (e) {
+        updateAuthUI();
+      }
+    }
+
+    // Filter Hostels by Accommodation Type (Boys, Girls, Co-ed, All)
+    function setHostelTypeFilter(type) {
+      currentTypeFilter = type || 'all';
+      switchTab('directory');
+
+      document.querySelectorAll('.filter-chip').forEach(c => c.classList.remove('active'));
+      if (type === 'all') {
+        const c = document.getElementById('filter-all-hostels');
+        if (c) c.classList.add('active');
+      } else if (type === 'boys') {
+        const c = document.getElementById('filter-boys');
+        if (c) c.classList.add('active');
+      } else if (type === 'girls') {
+        const c = document.getElementById('filter-girls');
+        if (c) c.classList.add('active');
+      } else if (type === 'coed') {
+        const c = document.getElementById('filter-coed');
+        if (c) c.classList.add('active');
+      }
+
+      filterCards();
+    }
+
+    // Backwards-compatible aliases
+    function selectCategory(category) {
+      setHostelTypeFilter('all');
+    }
+    function setRoleFilter(role) {
+      setHostelTypeFilter('all');
+    }
+
+    // Switch between Directory, Add Student, and Add Hostel
+    function switchTab(tabId) {
+      document.querySelectorAll('.tab-pane').forEach(p => p.classList.remove('active'));
+
+      if (tabId === 'directory') {
+        const pane = document.getElementById('pane-directory');
+        if (pane) pane.classList.add('active');
+        loadUsers();
+      } else if (tabId === 'add-student') {
+        document.querySelectorAll('.nav-tabs .tab-btn').forEach(b => b.classList.remove('active'));
+        const pane = document.getElementById('pane-add-student');
+        if (pane) pane.classList.add('active');
+      } else if (tabId === 'add-hostel') {
+        document.querySelectorAll('.nav-tabs .tab-btn').forEach(b => b.classList.remove('active'));
+        const pane = document.getElementById('pane-add-hostel');
+        if (pane) pane.classList.add('active');
+      }
+    }
+
+    // Set filter: all, student, hostel
+    function setRoleFilter(role) {
+      selectCategory(role);
+    }
+
+    // Toast alert helper
+    function showToast(message, type = 'info') {
+      const container = document.getElementById('toast-container');
+      const toast = document.createElement('div');
+      toast.className = `toast ${type}`;
+      
+      const icon = type === 'success' ? '✅' : type === 'error' ? '❌' : 'ℹ️';
+      toast.innerHTML = `<span>${icon}</span> <span>${message}</span>`;
+      container.appendChild(toast);
+
+      setTimeout(() => {
+        toast.style.opacity = '0';
+        toast.style.transform = 'translateY(10px)';
+        toast.style.transition = 'all 0.3s ease';
+        setTimeout(() => toast.remove(), 300);
+      }, 4000);
+    }
+
+    // Update Connection Status Indicator
+    function updateBackendStatus(online, message = '') {
+      const badge = document.getElementById('backend-status');
+      const text = document.getElementById('backend-text');
+      if (online) {
+        badge.className = 'status-badge online';
+        text.textContent = 'Backend Online (Port 8000)';
+      } else {
+        badge.className = 'status-badge offline';
+        text.textContent = message || 'Backend Offline (Run python main.py)';
+      }
+    }
+
+    // Load users from GET /User
+    async function loadUsers() {
+      try {
+        const res = await fetch(`${API_BASE}/User`);
+        if (!res.ok) throw new Error(`HTTP ${res.status}`);
+        const data = await res.json();
+        
+        allUsers = data.users || [];
+        updateBackendStatus(true);
+        updateStats();
+        filterCards();
+      } catch (err) {
+        updateBackendStatus(false);
+        renderEmptyState("Unable to reach backend. Make sure 'python main.py' is running on port 8000.");
+      }
+    }
+
+    // Update Counter Stats (Accommodations on site & DB overview in admin mode)
+    function updateStats() {
+      const hostels = allUsers.filter(u => (u.role || '').toLowerCase().includes('hostel'));
+      const boys = hostels.filter(u => (u.type || '').toLowerCase().includes('boys'));
+      const girlsAndCoed = hostels.filter(u => {
+        const t = (u.type || '').toLowerCase();
+        return t.includes('girls') || t.includes('co-ed') || t.includes('mixed');
+      });
+
+      if (document.getElementById('stat-hostels')) document.getElementById('stat-hostels').textContent = hostels.length;
+      if (document.getElementById('stat-boys')) document.getElementById('stat-boys').textContent = boys.length;
+      if (document.getElementById('stat-girls')) document.getElementById('stat-girls').textContent = girlsAndCoed.length;
+      if (document.getElementById('badge-hostels')) document.getElementById('badge-hostels').textContent = hostels.length;
+
+      // Update admin banner with total database count if active
+      const adminDbStats = document.getElementById('admin-db-stats');
+      if (adminDbStats) {
+        const studentCount = allUsers.filter(u => (u.role || '').toLowerCase() === 'student').length;
+        adminDbStats.textContent = `MongoDB: ${studentCount} students in DB, ${hostels.length} hostels`;
+      }
+    }
+
+    // Filter and render user cards (Hostels & PGs only on site; students kept in database)
+    function filterCards() {
+      const query = (document.getElementById('search-input').value || '').toLowerCase().trim();
+      const container = document.getElementById('cards-container');
+
+      // Students remain in database only - website strictly displays Hostels & PGs
+      let filtered = allUsers.filter(u => {
+        const role = (u.role || '').toLowerCase();
+        if (!role.includes('hostel')) return false;
+
+        if (currentTypeFilter && currentTypeFilter !== 'all') {
+          const type = (u.type || '').toLowerCase();
+          if (currentTypeFilter === 'boys' && !type.includes('boys')) return false;
+          if (currentTypeFilter === 'girls' && !type.includes('girls')) return false;
+          if (currentTypeFilter === 'coed' && !type.includes('co-ed') && !type.includes('mixed')) return false;
+        }
+
+        if (query) {
+          const matchUsername = (u.username || '').toLowerCase().includes(query);
+          const matchName = (u.name || '').toLowerCase().includes(query);
+          const matchLocation = (u.location || '').toLowerCase().includes(query);
+          const matchOwner = (u.ownerName || '').toLowerCase().includes(query);
+          const matchType = (u.type || '').toLowerCase().includes(query);
+          const matchAmenities = Array.isArray(u.amenities) && u.amenities.some(a => a.toLowerCase().includes(query));
+          return matchUsername || matchName || matchLocation || matchOwner || matchType || matchAmenities;
+        }
+        return true;
+      });
+
+      if (filtered.length === 0) {
+        renderEmptyState("No hostels or PGs matching your search/filter.");
+        return;
+      }
+
+      container.innerHTML = filtered.map(u => renderUserCard(u)).join('');
+    }
+
+    function renderEmptyState(message) {
+      const container = document.getElementById('cards-container');
+      container.innerHTML = `
+        <div class="empty-state">
+          <div class="empty-icon">🏢</div>
+          <h3>No Accommodations Found</h3>
+          <p>${message}</p>
+          <div style="display:flex; justify-content:center; gap:0.75rem;">
+            <button class="btn btn-secondary" onclick="switchTab('add-hostel')">+ List a Hostel / PG</button>
+          </div>
+        </div>
+      `;
+    }
+
+    // Render single user card HTML
+    function renderUserCard(u) {
+      const isStudent = (u.role || '').toLowerCase() === 'student';
+      const roleBadgeClass = isStudent ? 'student' : 'hostel';
+      const roleLabel = isStudent ? 'Student' : 'Hostel Owner';
+      const avatarIcon = isStudent ? '🎓' : '🏢';
+      const displayName = u.name || (isStudent ? 'Unnamed Student' : 'Unnamed Hostel');
+      const isCurrentUser = (getAuthUsername() === u.username);
+      const youBadge = isCurrentUser ? `<span style="display:inline-block; margin-left:0.4rem; padding:0.15rem 0.45rem; background:var(--primary); color:white; border-radius:9999px; font-size:0.65rem; font-weight:700;">YOU</span>` : '';
+
+      let bodyContent = '';
+      let footerPrice = '';
+
+      if (isStudent) {
+        bodyContent = `
+          ${u.college ? `<div class="card-detail-item"><span class="card-detail-icon">🏛️</span> <span>${u.college}</span></div>` : ''}
+          ${u.gender ? `<div class="card-detail-item"><span class="card-detail-icon">👤</span> <span>${u.gender}</span></div>` : ''}
+          ${u.preferredSharing ? `<div class="card-detail-item"><span class="card-detail-icon">🛏️</span> <span>Preferred: ${u.preferredSharing}</span></div>` : ''}
+        `;
+        if (u.budget) {
+          footerPrice = `<div class="card-price">₹${Number(u.budget).toLocaleString()} <span>/mo budget</span></div>`;
+        } else {
+          footerPrice = `<div class="card-price" style="color:var(--gray-500); font-size:0.8rem;">No budget specified</div>`;
+        }
+      } else {
+        // Hostel
+        const amenities = Array.isArray(u.amenities) ? u.amenities : [];
+        const singleRent = u.rent && u.rent.single ? `Single: ₹${Number(u.rent.single).toLocaleString()}` : null;
+        const doubleRent = u.rent && u.rent.double ? `Double: ₹${Number(u.rent.double).toLocaleString()}` : null;
+
+        bodyContent = `
+          ${u.ownerName ? `<div class="card-detail-item"><span class="card-detail-icon">👤</span> <span>Owner: ${u.ownerName}</span></div>` : ''}
+          ${u.type ? `<div class="card-detail-item"><span class="card-detail-icon">🏷️</span> <span>${u.type}</span></div>` : ''}
+          ${u.location ? `<div class="card-detail-item"><span class="card-detail-icon">📍</span> <span>${u.location}</span></div>` : ''}
+          ${u.contactNumber ? `<div class="card-detail-item"><span class="card-detail-icon">📞</span> <span>${u.contactNumber}</span></div>` : ''}
+          ${amenities.length > 0 ? `
+            <div class="card-pills">
+              ${amenities.map(a => `<span class="pill">${a}</span>`).join('')}
+            </div>
+          ` : ''}
+        `;
+
+        if (doubleRent || singleRent) {
+          footerPrice = `<div class="card-price">${doubleRent || singleRent} <span>/mo</span></div>`;
+        } else {
+          footerPrice = `<div class="card-price" style="color:var(--gray-500); font-size:0.8rem;">Rent on request</div>`;
+        }
+      }
+
+      let footerAction = '';
+      if (adminModeActive || isCurrentUser) {
+        footerAction = `
+          <button class="btn btn-danger-light" style="padding: 0.35rem 0.65rem; font-size: 0.75rem;" onclick="deleteUser('${escapeHtml(u.username)}')">
+            🗑️ Delete
+          </button>
+        `;
+      } else if (!isStudent && u.contactNumber) {
+        footerAction = `
+          <a href="tel:${escapeHtml(u.contactNumber)}" class="btn btn-outline" style="padding: 0.35rem 0.65rem; font-size: 0.75rem; text-decoration: none;">
+            📞 Contact
+          </a>
+        `;
+      } else if (isStudent) {
+        footerAction = `
+          <span style="font-size: 0.75rem; color: var(--gray-500); font-weight: 500;">
+            🎓 Seeking Room
+          </span>
+        `;
+      } else {
+        footerAction = `
+          <span style="font-size: 0.75rem; color: var(--secondary); font-weight: 600;">
+            ✓ Available
+          </span>
+        `;
+      }
+
+      return `
+        <div class="card">
+          <div class="card-header">
+            <div class="card-title-group">
+              <div class="card-avatar ${roleBadgeClass}">${avatarIcon}</div>
+              <div>
+                <div class="card-name">${escapeHtml(displayName)}${youBadge}</div>
+                <div class="card-username">@${escapeHtml(u.username || '')}</div>
+              </div>
+            </div>
+            <span class="role-badge ${roleBadgeClass}">${roleLabel}</span>
+          </div>
+
+          <div class="card-body">
+            ${bodyContent}
+          </div>
+
+          <div class="card-footer">
+            ${footerPrice}
+            ${footerAction}
+          </div>
+        </div>
+      `;
+    }
+
+    // Submit Handler: Add Student
+    async function handleStudentSubmit(e) {
+      e.preventDefault();
+      const btn = document.getElementById('btn-save-student');
+      btn.disabled = true;
+      btn.textContent = 'Registering Student...';
+
+      const username = document.getElementById('st-username').value.trim();
+      const password = document.getElementById('st-password').value;
+      const name = document.getElementById('st-name').value.trim();
+      const gender = document.getElementById('st-gender').value;
+      const college = document.getElementById('st-college').value.trim();
+      const budget = document.getElementById('st-budget').value;
+      const preferredSharing = document.getElementById('st-sharing').value;
+
+      try {
+        // Step 1: Register account
+        const regRes = await fetch(`${API_BASE}/register`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            username: username,
+            password: password,
+            role: 'student'
+          })
+        });
+
+        if (!regRes.ok) {
+          const errData = await regRes.json().catch(() => ({}));
+          throw new Error(errData.detail || `Registration failed (${regRes.status})`);
+        }
+
+        // Step 2: Update Profile details
+        const updateData = {};
+        if (name) updateData.name = name;
+        if (gender) updateData.gender = gender;
+        if (college) updateData.college = college;
+        if (budget) updateData.budget = parseInt(budget);
+        if (preferredSharing) updateData.preferredSharing = preferredSharing;
+
+        if (Object.keys(updateData).length > 0) {
+          await fetch(`${API_BASE}/student/${encodeURIComponent(username)}`, {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(updateData)
+          });
+        }
+
+        showToast(`Student @${username} added successfully!`, 'success');
+        document.getElementById('student-form').reset();
+        switchTab('directory');
+      } catch (err) {
+        showToast(err.message, 'error');
+      } finally {
+        btn.disabled = false;
+        btn.textContent = '💾 Save Student Profile';
+      }
+    }
+
+    // Submit Handler: Add Hostel
+    async function handleHostelSubmit(e) {
+      e.preventDefault();
+      const btn = document.getElementById('btn-save-hostel');
+      btn.disabled = true;
+      btn.textContent = 'Registering Hostel...';
+
+      const username = document.getElementById('hs-username').value.trim();
+      const password = document.getElementById('hs-password').value;
+      const name = document.getElementById('hs-name').value.trim();
+      const ownerName = document.getElementById('hs-owner').value.trim();
+      const type = document.getElementById('hs-type').value;
+      const contactNumber = document.getElementById('hs-contact').value.trim();
+      const location = document.getElementById('hs-location').value.trim();
+      const singleRent = document.getElementById('hs-rent-single').value;
+      const doubleRent = document.getElementById('hs-rent-double').value;
+
+      // Gather checked amenities
+      const amenities = [];
+      document.querySelectorAll('.amenity-cb:checked').forEach(cb => amenities.push(cb.value));
+
+      try {
+        // Step 1: Register account
+        const regRes = await fetch(`${API_BASE}/register`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            username: username,
+            password: password,
+            role: 'hostel owner'
+          })
+        });
+
+        if (!regRes.ok) {
+          const errData = await regRes.json().catch(() => ({}));
+          throw new Error(errData.detail || `Registration failed (${regRes.status})`);
+        }
+
+        // Step 2: Update Hostel Profile details
+        const updateData = {};
+        if (name) updateData.name = name;
+        if (ownerName) updateData.ownerName = ownerName;
+        if (type) updateData.type = type;
+        if (contactNumber) updateData.contactNumber = contactNumber;
+        if (location) updateData.location = location;
+        if (amenities.length > 0) updateData.amenities = amenities;
+
+        const rent = {};
+        if (singleRent) rent.single = parseInt(singleRent);
+        if (doubleRent) rent.double = parseInt(doubleRent);
+        if (Object.keys(rent).length > 0) updateData.rent = rent;
+
+        if (Object.keys(updateData).length > 0) {
+          await fetch(`${API_BASE}/hostel/${encodeURIComponent(username)}`, {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(updateData)
+          });
+        }
+
+        showToast(`Hostel @${username} added successfully!`, 'success');
+        document.getElementById('hostel-form').reset();
+        switchTab('directory');
+      } catch (err) {
+        showToast(err.message, 'error');
+      } finally {
+        btn.disabled = false;
+        btn.textContent = '💾 Save Hostel Listing';
+      }
+    }
+
+    // Delete user handler (Protected - Requires Admin or Self Authorization)
+    async function deleteUser(username) {
+      const token = getAuthToken();
+      if (!token) {
+        showToast('Administrator verification required to delete records.', 'error');
+        openAdminLoginModal();
+        return;
+      }
+
+      if (!confirm(`Are you sure you want to delete user @${username}? This action is permanent.`)) return;
+
+      try {
+        const res = await fetch(`${API_BASE}/user/${encodeURIComponent(username)}`, {
+          method: 'DELETE',
+          headers: {
+            'Authorization': `Bearer ${token}`
+          }
+        });
+
+        if (!res.ok) {
+          const errData = await res.json().catch(() => ({}));
+          throw new Error(errData.detail || `Failed to delete (${res.status})`);
+        }
+
+        showToast(`User @${username} deleted successfully`, 'success');
+        loadUsers();
+      } catch (err) {
+        showToast(err.message, 'error');
+      }
+    }
+
+    // Helper: Escape HTML strings
+    function escapeHtml(str) {
+      if (!str) return '';
+      return String(str)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#39;');
+    }
+
+    // Auto-load on page startup & poll status periodically
+    window.addEventListener('DOMContentLoaded', () => {
+      checkCurrentSession();
+      loadUsers();
+      setInterval(loadUsers, 10000); // refresh every 10s
+    });
+  </script>
+</body>
+</html>

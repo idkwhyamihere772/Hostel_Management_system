@@ -1,0 +1,22 @@
+# Environment secrets - DO NOT COMMIT TO GITHUB
+.env
+.env.local
+.env.*.local
+
+# Python cache
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Virtual environments
+venv/
+env/
+.venv/
+ENV/
+
+# IDE & OS files
+.vscode/
+.idea/
+*.swp
+Thumbs.db
+.DS_Store
