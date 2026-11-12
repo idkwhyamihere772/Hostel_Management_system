@@ -22,7 +22,7 @@ app.add_middleware(
     allow_headers=["*"]
 )
 
-Secret_key = os.getenv("Secret_key") or os.getenv("secret_key")
+Secret_key = os.getenv("Secret_key") or os.getenv("secret_key") or os.getenv("SECRET_KEY") or "hostel_secret_jwt_key_fallback"
 Algorithm = "HS256"
 Access_token_expire_minutes = 60
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="login")
@@ -32,7 +32,7 @@ def create_access_token(data: dict)->str:
     to_encode.update({"exp": expire})
     return jwt.encode(to_encode, Secret_key, algorithm=Algorithm)
 
-mongo_uri = os.getenv("mongo_uri")
+mongo_uri = os.getenv("mongo_uri") or os.getenv("MONGO_URI") or "mongodb://localhost:27017"
 cli = MongoClient(mongo_uri)
 
 db = cli.MAIN
