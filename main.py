@@ -98,7 +98,37 @@ def ensure_admin():
     except Exception:
         pass
 
+def ensure_demo_accounts():
+    try:
+        if not user_collection.find_one({"username": "demo_student"}):
+            user_collection.insert_one({
+                "username": "demo_student",
+                "password": hash_password("student123"),
+                "role": "student",
+                "name": "Demo Student",
+                "gender": "Male",
+                "college": "Delhi University",
+                "budget": 8500,
+                "preferredSharing": "Double Sharing"
+            })
+        if not user_collection.find_one({"username": "demo_hostel"}):
+            user_collection.insert_one({
+                "username": "demo_hostel",
+                "password": hash_password("hostel123"),
+                "role": "hostel_owner",
+                "name": "Greenfield Student PG",
+                "ownerName": "Ramesh Verma",
+                "type": "Boys Hostel",
+                "location": "North Campus, Delhi",
+                "contactNumber": "+91 9876543210",
+                "rent": {"single": 11000, "double": 7500},
+                "amenities": ["High-Speed WiFi", "Mess / Food Included", "Air Conditioner (AC)", "24x7 Security & CCTV"]
+            })
+    except Exception:
+        pass
+
 ensure_admin()
+ensure_demo_accounts()
 
 @app.get("/", response_class=HTMLResponse)
 @app.get("/app", response_class=HTMLResponse)

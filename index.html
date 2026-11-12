@@ -1240,7 +1240,7 @@
         <form id="login-form" onsubmit="handleLoginSubmit(event)">
           <div class="form-group" style="margin-bottom: 1rem;">
             <label class="form-label">Username <span class="req">*</span></label>
-            <input type="text" class="form-input" id="login-username" required placeholder="e.g. aarav_mehta or sassy_palak_12" autocomplete="username">
+            <input type="text" class="form-input" id="login-username" required placeholder="Enter username" autocomplete="username">
           </div>
 
           <div class="form-group" style="margin-bottom: 1.25rem;">
@@ -1249,10 +1249,15 @@
           </div>
 
           <div style="background: var(--gray-50); border: 1px solid var(--border); border-radius: var(--radius-sm); padding: 0.75rem; margin-bottom: 1.25rem; font-size: 0.78rem; color: var(--gray-700);">
-            <div style="font-weight: 600; margin-bottom: 0.25rem; color: var(--dark);">💡 Demo Accounts:</div>
-            <div>• Student: <code>aarav_mehta</code> / <code>aarav123</code></div>
-            <div>• Student: <code>sassy_palak_12</code> / <code>palak123</code></div>
-            <div>• Hostel: <code>sunrise_boys_pg</code> / <code>sunrise123</code></div>
+            <div style="font-weight: 600; margin-bottom: 0.45rem; color: var(--dark);">💡 Evaluator Demo Accounts:</div>
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.35rem;">
+              <span>• Student: <code>demo_student</code> / <code>student123</code></span>
+              <button type="button" class="btn btn-outline" style="padding: 0.15rem 0.5rem; font-size: 0.7rem;" onclick="fillLogin('demo_student', 'student123')">Auto-fill</button>
+            </div>
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+              <span>• Hostel Owner: <code>demo_hostel</code> / <code>hostel123</code></span>
+              <button type="button" class="btn btn-outline" style="padding: 0.15rem 0.5rem; font-size: 0.7rem;" onclick="fillLogin('demo_hostel', 'hostel123')">Auto-fill</button>
+            </div>
           </div>
 
           <div style="display: flex; justify-content: flex-end; gap: 0.6rem;">
@@ -1535,6 +1540,13 @@
       if (modal) modal.classList.remove('active');
       const form = document.getElementById('login-form');
       if (form) form.reset();
+    }
+
+    function fillLogin(username, password) {
+      const u = document.getElementById('login-username');
+      const p = document.getElementById('login-password');
+      if (u) u.value = username;
+      if (p) p.value = password;
     }
 
     function handleModalOverlayClick(e, modalId) {
